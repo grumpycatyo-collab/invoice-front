@@ -15,6 +15,7 @@ interface UploaderProps {
   onPreview: (preview : string) => void;
 }
 
+
 export default function Uploader({ onInspect, onPreview }: UploaderProps) {
   const [file, setFile] = useState<File | null>(null)
   const [dragActive, setDragActive] = useState(false)
@@ -42,6 +43,7 @@ export default function Uploader({ onInspect, onPreview }: UploaderProps) {
             setIsPdf(true)
             setPreview(URL.createObjectURL(file))
             onPreview(URL.createObjectURL(file))
+
           } else if (file.type.includes('word')) {
             setIsPdf(false)
             setPreview('/path-to-your-document-icon.png') // Replace with your document icon path
