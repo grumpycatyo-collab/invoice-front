@@ -6,13 +6,21 @@ import Uploader from '@/components/uploader'
 import { Toaster } from '@/components/toaster'
 import InspectModal from '@/components/form-modal'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 export default function Home() {
 
   const [inspectFileId, setInspectFileId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [preview, setPreview] = useState<string | null>(null)
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access_token')
+    setIsLoggedIn(!!accessToken)
+  }, [])
+
+  
   const handleInspect = (fileId: string) => {
     setInspectFileId(fileId)
     setIsModalOpen(true)
@@ -33,13 +41,28 @@ export default function Home() {
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center">
       <Toaster />
+      {isLoggedIn && (
+      <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
       <Link
         href="https://vercel.com/templates/next.js/blob-starter"
-        className="group mt-20 sm:mt-0 rounded-full flex space-x-1 bg-white/30 shadow-sm ring-1 ring-gray-900/5 text-gray-600 text-sm font-medium px-10 py-2 hover:shadow-lg active:shadow-sm transition-all"
+        className="group rounded-full  flex space-x-1 bg-white/30 shadow-sm ring-1 ring-gray-900/5 text-gray-600 text-sm font-medium px-10 py-2 hover:shadow-lg active:shadow-sm transition-all"
       >
-        <p>See terms and conditions</p>
+        <p>See other invoices</p>
         <ExpandingArrow />
       </Link>
+
+      <a
+      href="https://twitter.com/steventey/status/1613928948915920896"
+      target="_blank"
+      rel="noreferrer"
+      className="mx-auto mb-5 flex max-w-fit animate-fade-up items-center justify-center space-x-2 overflow-hidden rounded-full bg-purple-100 px-7 py-2 transition-colors hover:bg-purple-200"
+    >
+      <p className="text-sm font-semibold text-purple-600">
+        Dashboard 
+      </p>
+</a>
+    </div>
+      )}
       <h1 className="pt-4 pb-8 bg-gradient-to-br from-black via-[#171717] to-[#575757] bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl">
         Invoice your contracts
       </h1>

@@ -90,6 +90,8 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
         }
 
+        window.location.reload();
+
         toast.success('User successfully authenticated')
 
         setShowAuthModal(false);
