@@ -41,7 +41,7 @@ export default function Home() {
           href="https://vercel.com/blob"
           className="font-medium underline underline-offset-4 hover:text-black transition-colors"
         >
-          Shit Blob
+          Contract to Invoice Converter
         </Link>{' '}
         demo. Built by{' '}
         <Link
