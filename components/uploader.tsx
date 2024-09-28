@@ -2,8 +2,8 @@
 
 import { useState, useCallback, useMemo, ChangeEvent } from 'react'
 import toast from 'react-hot-toast'
+import axios from 'axios'
 import LoadingDots from './loading-dots'
-import { PutBlobResult } from '@vercel/blob'
 
 export default function Uploader() {
   const [data, setData] = useState<{
@@ -12,10 +12,10 @@ export default function Uploader() {
     image: null,
   })
   const [file, setFile] = useState<File | null>(null)
-
   const [dragActive, setDragActive] = useState(false)
+  const [saving, setSaving] = useState(false)
 
-  const onChangePicture = useCallback(
+  const onChangeFile = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.currentTarget.files && event.currentTarget.files[0]
       if (file) {
@@ -34,82 +34,82 @@ export default function Uploader() {
     [setData]
   )
 
-  const [saving, setSaving] = useState(false)
-
   const saveDisabled = useMemo(() => {
     return !data.image || saving
   }, [data.image, saving])
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setSaving(true)
+
+    const formData = new FormData()
+    if (file) {
+      formData.append('file', file)
+      console.log('File name:', file.name)
+      console.log('File type:', file.type)
+      console.log('File size:', file.size, 'bytes')
+    }
+
+    try {
+      const response = await axios.post('http://localhost:8000/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+
+
+      toast(
+        (t: { id: string } 
+          ) => (
+          <div className="relative">
+            <div className="p-2">
+              <p className="font-semibold text-gray-900">
+                File uploaded!
+              </p>
+              <p className="mt-1 text-sm text-gray-500">
+                Your file has been uploaded
+              </p>
+            </div>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="absolute top-0 -right-2 inline-flex text-gray-400 focus:outline-none focus:text-gray-500 rounded-full p-1.5 hover:bg-gray-100 transition ease-in-out duration-150"
+            >
+              <svg
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.293 5.293a1 1 0 011.414 0L10
+                    8.586l3.293-3.293a1 1 0 111.414 1.414L11.414
+                    10l3.293 3.293a1 1 0 01-1.414 1.414L10
+                    11.414l-3.293 3.293a1 1 0 01-1.414-1.414L8.586
+                    10 5.293 6.707a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+          </div>
+        ),
+        { duration: 300000 }
+      )
+      // Handle successful upload (e.g., display the uploaded file URL)
+    } catch (error) {
+      console.error('Error uploading file:', error)
+      toast.error('Failed to upload file: ' + (error as Error).message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
-    <form
-      className="grid gap-6"
-      onSubmit={async (e) => {
-        e.preventDefault()
-        setSaving(true)
-        fetch('/api/upload', {
-          method: 'POST',
-          headers: { 'content-type': file?.type || 'application/octet-stream' },
-          body: file,
-        }).then(async (res) => {
-          if (res.status === 200) {
-            const { url } = (await res.json()) as PutBlobResult
-            toast(
-              (t: { id: string } 
-                ) => (
-                <div className="relative">
-                  <div className="p-2">
-                    <p className="font-semibold text-gray-900">
-                      File uploaded!
-                    </p>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Your file has been uploaded to{' '}
-                      <a
-                        className="font-medium text-gray-900 underline"
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {url}
-                      </a>
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => toast.dismiss(t.id)}
-                    className="absolute top-0 -right-2 inline-flex text-gray-400 focus:outline-none focus:text-gray-500 rounded-full p-1.5 hover:bg-gray-100 transition ease-in-out duration-150"
-                  >
-                    <svg
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.293 5.293a1 1 0 011.414 0L10
-                          8.586l3.293-3.293a1 1 0 111.414 1.414L11.414
-                          10l3.293 3.293a1 1 0 01-1.414 1.414L10
-                          11.414l-3.293 3.293a1 1 0 01-1.414-1.414L8.586
-                          10 5.293 6.707a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              ),
-              { duration: 300000 }
-            )
-          } else {
-            const error = await res.text()
-            toast.error(error)
-          }
-          setSaving(false)
-        })
-      }}
-    >
+    <form className="grid gap-6" onSubmit={handleSubmit}>
       <div>
         <div className="space-y-1 mb-4">
           <h2 className="text-xl font-semibold">Upload a file</h2>
           <p className="text-sm text-gray-500">
-            Accepted formats: .png, .jpg, .gif, .mp4
+            Accepted formats: .pdf, .docx, .doc
           </p>
         </div>
         <label
@@ -189,7 +189,7 @@ export default function Uploader() {
             <p className="mt-2 text-center text-sm text-gray-500">
               Max file size: 50MB
             </p>
-            <span className="sr-only">Photo upload</span>
+            <span className="sr-only">File upload</span>
           </div>
           {data.image && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -201,15 +201,15 @@ export default function Uploader() {
           )}
         </label>
         <div className="mt-1 flex rounded-md shadow-sm">
-          <input
-            id="image-upload"
-            name="image"
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            onChange={onChangePicture}
-          />
-        </div>
+  <input
+    id="image-upload"
+    name="file"
+    type="file"
+    accept=".pdf,.docx,.doc"
+    className="sr-only"
+    onChange={onChangeFile}
+  />
+</div>
       </div>
 
       <button
