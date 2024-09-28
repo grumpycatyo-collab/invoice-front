@@ -42,6 +42,7 @@ export default function Uploader({ onInspect, onPreview }: UploaderProps) {
           if (file.type === 'application/pdf') {
             setIsPdf(true)
             setPreview(URL.createObjectURL(file))
+            console.log(preview)
             onPreview(URL.createObjectURL(file))
 
           } else if (file.type.includes('word')) {

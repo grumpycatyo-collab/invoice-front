@@ -79,24 +79,19 @@ interface InspectModalProps {
 interface FileDetails {
   [key: string]: string | number | boolean;
 }
-const maxWidth = 1000;
 
 export default function InspectModal({ fileId, filePreview, onClose }: InspectModalProps) {
   const [fileDetails, setFileDetails] = useState<FileDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(true);
-
-  const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
-
-  const [containerWidth, setContainerWidth] = useState<number>();
-
+  const [numPages, setNumPages] = useState<number>();
+ 
   const options = {
     cMapUrl: '/cmaps/',
     standardFontDataUrl: '/standard_fonts/',
   };
   type PDFFile = string | File | null;
-
 
   
 
@@ -205,11 +200,9 @@ export default function InspectModal({ fileId, filePreview, onClose }: InspectMo
             <div className="w-2/5 h-full overflow-hidden">
               <h3 className="text-xl text-gray-900 mb-4 font-sf">PDF Preview</h3>
               <div >
-              <Document file={filePreview} onLoadSuccess={onDocumentLoadSuccess} options={options} className="bg-gray-100 h-[calc(100%-2rem)] flex items-center justify-center rounded-lg border border-gray-200 font-sf" >
+              <Document file={filePreview} onLoadSuccess={onDocumentLoadSuccess} className="bg-gray-100 h-[calc(100%-2rem)] flex items-center justify-center rounded-lg border border-gray-200 font-sf" >
                 
-                  <Page
-                    pageNumber={numPages}
-                  />
+              <Page pageNumber={pageNumber} />
 
                 </Document> 
 
