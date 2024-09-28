@@ -26,14 +26,14 @@ export default function Home() {
           href="https://vercel.com/blob"
           className="font-medium underline underline-offset-4 hover:text-black transition-colors"
         >
-          Vercel Blob
+          Shit Blob
         </Link>{' '}
-        demo. Built with{' '}
+        demo. Built by{' '}
         <Link
           href="https://nextjs.org/docs"
           className="font-medium underline underline-offset-4 hover:text-black transition-colors"
         >
-          Next.js App Router
+          Pain Du Chocolat
         </Link>
         .
       </p>
