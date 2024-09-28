@@ -8,7 +8,6 @@ import { Document, Page, pdfjs } from 'react-pdf'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
 
-// Make sure to set the worker source
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 interface UploaderProps {
@@ -16,22 +15,18 @@ interface UploaderProps {
 }
 
 export default function Uploader({ onInspect }: UploaderProps) {
-  
-  const [data, setData] = useState<{
-    image: string | null
-  }>({
-    image: null,
-  })
   const [file, setFile] = useState<File | null>(null)
   const [dragActive, setDragActive] = useState(false)
   const [saving, setSaving] = useState(false)
   const [uploadSuccess, setUploadSuccess] = useState(false)
   const [fileId, setFileId] = useState<string | null>(null)
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [preview, setPreview] = useState<string | null>(null)
   const [isPdf, setIsPdf] = useState(false)
 
+  const resetState = () => {
+    setUploadSuccess(false)
+    setFileId(null)
+  }
 
   const onChangeFile = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -41,10 +36,10 @@ export default function Uploader({ onInspect }: UploaderProps) {
           toast.error('File size too big (max 50MB)')
         } else {
           setFile(file)
+          resetState()
           if (file.type === 'application/pdf') {
             setIsPdf(true)
             setPreview(URL.createObjectURL(file))
-            console.log(URL.createObjectURL(file))
           } else if (file.type.includes('word')) {
             setIsPdf(false)
             setPreview('/path-to-your-document-icon.png') // Replace with your document icon path
@@ -62,75 +57,33 @@ export default function Uploader({ onInspect }: UploaderProps) {
     [setFile]
   )
 
-  const saveDisabled = useMemo(() => {
-    return !data.image || saving
-  }, [data.image, saving])
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!file) return
+
     setSaving(true)
 
     const formData = new FormData()
-    if (file) {
-      formData.append('file', file)
-      console.log('File name:', file.name)
-      console.log('File type:', file.type)
-      console.log('File size:', file.size, 'bytes')
-    }
+    formData.append('file', file)
 
     try {
+      // Uncomment this when you're ready to make actual API calls
       // const response = await axios.post('http://localhost:8000/upload', formData, {
       //   headers: {
       //     'Content-Type': 'multipart/form-data',
       //   },
       // })
+      // const { fileId } = response.data;
 
-
-      setTimeout(() => {
-        const mockFileId = 'mock-file-id-' + Date.now()
-        setSaving(false)
-        setUploadSuccess(true)
-        setFileId(mockFileId)
-      }, 2000)
-
-      toast(
-        (t: { id: string } 
-          ) => (
-          <div className="relative">
-            <div className="p-2">
-              <p className="font-semibold text-gray-900">
-                File uploaded!
-              </p>
-              <p className="mt-1 text-sm text-gray-500">
-                Your file has been uploaded
-              </p>
-            </div>
-            <button
-              onClick={() => toast.dismiss(t.id)}
-              className="absolute top-0 -right-2 inline-flex text-gray-400 focus:outline-none focus:text-gray-500 rounded-full p-1.5 hover:bg-gray-100 transition ease-in-out duration-150"
-            >
-              <svg
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5.293 5.293a1 1 0 011.414 0L10
-                    8.586l3.293-3.293a1 1 0 111.414 1.414L11.414
-                    10l3.293 3.293a1 1 0 01-1.414 1.414L10
-                    11.414l-3.293 3.293a1 1 0 01-1.414-1.414L8.586
-                    10 5.293 6.707a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-          </div>
-        ),
-        { duration: 2000 }
-      )
+      // For now, we'll use a mock fileId
+      await new Promise(resolve => setTimeout(resolve, 2000)) // Simulating API call
+      const mockFileId = 'mock-file-id-' + Date.now()
+      
+      setFileId(mockFileId)
       setUploadSuccess(true)
-      // Handle successful upload (e.g., display the uploaded file URL)
+      toast.success('File converted successfully!')
+      
+      // onInspect(mockFileId)
     } catch (error) {
       console.error('Error uploading file:', error)
       toast.error('Failed to upload file: ' + (error as Error).message)
@@ -139,13 +92,11 @@ export default function Uploader({ onInspect }: UploaderProps) {
     }
   }
 
-  const handleInspect = () => {
-    if (fileId) {
-      setIsModalOpen(true);
-      onInspect(fileId)
-    }
+   const handleInspect = () => {
+      if (fileId) {
+        onInspect(fileId)
+   }
   }
-
 
   return (
     <form className="grid gap-6" onSubmit={handleSubmit}>
@@ -188,6 +139,7 @@ export default function Uploader({ onInspect }: UploaderProps) {
                   toast.error('File size too big (max 50MB)')
                 } else {
                   setFile(file)
+                  resetState()
                   if (file.type === 'application/pdf') {
                     setIsPdf(true)
                     setPreview(URL.createObjectURL(file))
@@ -196,7 +148,6 @@ export default function Uploader({ onInspect }: UploaderProps) {
                     const reader = new FileReader()
                     reader.onload = (e) => {
                       setPreview(e.target?.result as string)
-                      setData({ image: e.target?.result as string })
                     }
                     reader.readAsDataURL(file)
                   }
@@ -209,7 +160,7 @@ export default function Uploader({ onInspect }: UploaderProps) {
               className={`${
                 dragActive ? 'border-2 border-black' : ''
               } absolute inset-0 z-[3] flex flex-col items-center justify-center rounded-md px-10 transition-all ${
-                data.image
+                file
                   ? 'bg-white/80 opacity-0 hover:opacity-100 hover:backdrop-blur-md'
                   : 'bg-white opacity-100 hover:bg-gray-50'
               }`}
@@ -282,7 +233,9 @@ export default function Uploader({ onInspect }: UploaderProps) {
         {saving ? (
           <LoadingDots color="#808080" />
         ) : (
-          <p className="text-sm">{uploadSuccess ? 'Inspect' : 'Convert your contract'}</p>
+          <p className="text-sm">
+            {uploadSuccess ? 'Inspect' : 'Convert your contract'}
+          </p>
         )}
       </button>
     </form>
