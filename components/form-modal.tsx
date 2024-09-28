@@ -1,10 +1,13 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction,useCallback} from "react";
 import { cn } from "@/lib/utils";
 import { Drawer } from "vaul";
 import * as Dialog from "@radix-ui/react-dialog";
 import useMediaQuery from "@/lib/hooks/use-media-query";
+import { Document, Page } from 'react-pdf';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
 export function Modal({
   children,
   className,
@@ -18,6 +21,7 @@ export function Modal({
 }) {
   const { isMobile } = useMediaQuery();
 
+  
   if (isMobile) {
     return (
       <Drawer.Root open={showModal} onOpenChange={setShowModal}>
@@ -68,17 +72,37 @@ import Tooltip from "./shared/tooltip";
 
 interface InspectModalProps {
   fileId: string | null;
+  filePreview: string | null;
   onClose: () => void;
 }
 
 interface FileDetails {
   [key: string]: string | number | boolean;
 }
+const maxWidth = 1000;
 
-export default function InspectModal({ fileId, onClose }: InspectModalProps) {
+export default function InspectModal({ fileId, filePreview, onClose }: InspectModalProps) {
   const [fileDetails, setFileDetails] = useState<FileDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(true);
+
+  const [numPages, setNumPages] = useState<number>();
+  const [pageNumber, setPageNumber] = useState<number>(1);
+
+  const [containerWidth, setContainerWidth] = useState<number>();
+
+  const options = {
+    cMapUrl: '/cmaps/',
+    standardFontDataUrl: '/standard_fonts/',
+  };
+  type PDFFile = string | File | null;
+
+
+  
+
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
+    setNumPages(numPages);
+  }
 
   useEffect(() => {
     if (fileId) {
@@ -180,9 +204,19 @@ export default function InspectModal({ fileId, onClose }: InspectModalProps) {
             {/* PDF Preview */}
             <div className="w-2/5 h-full overflow-hidden">
               <h3 className="text-xl text-gray-900 mb-4 font-sf">PDF Preview</h3>
-              <div className="bg-gray-100 h-[calc(100%-2rem)] flex items-center justify-center rounded-lg border border-gray-200 font-sf">
-                <p>PDF Viewer Placeholder</p>
+              <div >
+              <Document file={filePreview} onLoadSuccess={onDocumentLoadSuccess} options={options} className="bg-gray-100 h-[calc(100%-2rem)] flex items-center justify-center rounded-lg border border-gray-200 font-sf" >
+                
+                  <Page
+                    pageNumber={numPages}
+                  />
+
+                </Document> 
+
+              
               </div>
+
+              
             </div>
 
             {/* Invoice Details Form */}

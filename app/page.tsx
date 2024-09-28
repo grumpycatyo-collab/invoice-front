@@ -11,6 +11,7 @@ export default function Home() {
 
   const [inspectFileId, setInspectFileId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [preview, setPreview] = useState<string | null>(null)
 
   const handleInspect = (fileId: string) => {
     setInspectFileId(fileId)
@@ -23,6 +24,10 @@ export default function Home() {
     setIsModalOpen(false)
 
   }
+
+  const handlePreview = (preview: string) => {
+    setPreview(preview)
+  } 
   
 
   return (
@@ -39,7 +44,7 @@ export default function Home() {
         Invoice your contracts
       </h1>
       <div className="bg-white/30 p-12 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-xl mx-auto w-full">
-      <Uploader onInspect={handleInspect}/>
+      <Uploader onInspect={handleInspect} onPreview={handlePreview}/>
       </div>
       <p className="font-light text-gray-600 w-full max-w-lg text-center mt-6">
         <Link
@@ -81,7 +86,7 @@ export default function Home() {
           <p className="font-light">Source</p>
         </Link>
       </div> */}
-      {inspectFileId && <InspectModal fileId={inspectFileId} onClose={handleCloseModal} />}
+      {inspectFileId && <InspectModal fileId={inspectFileId} filePreview={preview} onClose={handleCloseModal} />}
     </main>
   )
 }
