@@ -7,7 +7,7 @@ import useScroll from "@/lib/hooks/use-scroll";
 import { useAuthModal } from "./sign-in-modal";
 import UserDropdown from "./user-dropdown";
 import { Session } from "next-auth";
-
+import LoadingDots from '@/components/loading-dots'
 export default function NavBar({ session }: { session: Session | null }) {
   const { AuthModal, setShowAuthModal } = useAuthModal();
   const scrolled = useScroll(50);
@@ -62,7 +62,7 @@ export default function NavBar({ session }: { session: Session | null }) {
           </Link>
           <div>
           {isLoading ? (
-              <p className="text-sm text-gray-500">Loading...</p>
+              <LoadingDots color="#808080" />
             ) : userName ? (
               <div className="flex items-center space-x-2">
                 <span className="text-sm font-medium">Welcome,</span>

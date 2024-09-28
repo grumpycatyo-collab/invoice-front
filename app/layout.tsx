@@ -5,9 +5,9 @@ import Nav from "@/components/layout/nav";
 import { Suspense } from "react";
 
 export const metadata = {
-  title: "Precedent - Building blocks for your Next.js project",
+  title: "La Chocolat Converter",
   description:
-    "Precedent is the all-in-one solution for your Next.js project. It includes a design system, authentication, analytics, and more.",
+    "La Chocolat Converter offers optimized AI convertion from contracts to specializedd invoices",
   metadataBase: new URL("https://precedent.dev"),
 };
 

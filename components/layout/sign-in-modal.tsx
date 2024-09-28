@@ -8,6 +8,7 @@ import {
 } from "react";
 import { Form } from '@/components/shared/form';
 import { SubmitButton } from '@/components/shared/submit-button';
+import toast from "react-hot-toast";
 
 interface AuthModalProps {
   showAuthModal: boolean;
@@ -89,9 +90,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
         }
 
+        toast.success('User successfully authenticated')
+
         setShowAuthModal(false);
       } else {
         const errorData = await response.json();
+        toast.error(errorData)
         setError(errorData.message || "Authentication failed");
       }
     } catch (error) {

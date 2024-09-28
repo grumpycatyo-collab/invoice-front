@@ -1,4 +1,5 @@
 "use client";
+import axios from 'axios';
 
 import { Dispatch, SetStateAction,useCallback} from "react";
 import { cn } from "@/lib/utils";
@@ -8,6 +9,7 @@ import useMediaQuery from "@/lib/hooks/use-media-query";
 import { Document, Page } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
+import toast from 'react-hot-toast'
 export function Modal({
   children,
   className,
@@ -100,48 +102,21 @@ export default function InspectModal({ fileId, filePreview, onClose }: InspectMo
   }
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const fileId = urlParams.get('fileId');
     if (fileId) {
-      // Mock API call to /inspect
       setLoading(true);
-      setTimeout(() => {
-        setFileDetails({
-          id: 1,
-          userId: 123,
-          logo: "logo_url",
-          urlHash: "abc123",
-          docId: "INV-2023-001",
-          currencySymbol: "$",
-          languageCode: "en",
-          issueDate: "2023-05-01",
-          dueDate: "2023-05-31",
-          PONumber: "PO-2023-001",
-          fromName: "Acme Corporation",
-          fromEmail: "billing@acmecorp.com",
-          toName: "Globex Industries",
-          toEmail: "accounts@globex.com",
-          toPhone: "+1 (555) 123-4567",
-          toAddress: "123 Business Ave, Suite 200, Metropolis, NY 10001",
-          services: JSON.stringify([
-            { name: "Web Development", price: 5000 },
-            { name: "UI/UX Design", price: 3000 },
-            { name: "Content Creation", price: 2000 }
-          ]),
-          bankDetails: "Bank: International Bank, Account: 1234567890, SWIFT: INTLBANK",
-          additionalInfo: "Payment is due within 30 days. Late payments are subject to a 5% fee.",
-          companyPromoInfoPhone: "+1 (800) 555-ACME",
-          companyPromoInfoEmail: "info@acmecorp.com",
-          companyPromoInfoWebPage: "www.acmecorp.com",
-          tax: 1000,
-          discount: 500,
-          total: 10500,
-          subtotal: 10000,
-          balance_due: 10500,
-          paidDate: "",
-          paidAmount: 0,
-          isExpense: false
+      axios.get(`http://localhost:8005/files/inspect/${fileId}`)
+        .then(response => {
+          setFileDetails(response.data);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching file details:', error);
+          toast.error('')
+          setLoading(false);
+
         });
-        setLoading(false);
-      }, 1000);
     }
   }, [fileId]);
 

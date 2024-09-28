@@ -69,26 +69,34 @@ export default function Uploader({ onInspect, onPreview }: UploaderProps) {
     setSaving(true)
 
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('files', file)
 
     try {
-      // Uncomment this when you're ready to make actual API calls
-      // const response = await axios.post('http://localhost:8000/upload', formData, {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
-      // })
-      // const { fileId } = response.data;
+      const accessToken = localStorage.getItem('access_token');
+      if (accessToken === null){
+          localStorage.removeItem('access_token');
+      }
+      const response = await axios.post('http://localhost:8005/files/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers":
+              "Access-Control-Allow-Headers, Origin, X-Api-Key, X-Requested-With, Content-Type, Accept, Authorization",
+               'Authorization': `Bearer ${accessToken}`
+        },
+      })
+      const fileIds  = response.data;
+      const fileId = fileIds[0];
+      const newUrl = `${window.location.pathname}?fileId=${fileId}`;
+      window.history.pushState({ fileId }, '', newUrl);
 
-      // For now, we'll use a mock fileId
-      await new Promise(resolve => setTimeout(resolve, 2000)) // Simulating API call
-      const mockFileId = 'mock-file-id-' + Date.now()
-      
-      setFileId(mockFileId)
+      console.log('fileId',fileId)
+      setFileId(fileId)
       setUploadSuccess(true)
       toast.success('File converted successfully!')
       
-      // onInspect(mockFileId)
+
     } catch (error) {
       console.error('Error uploading file:', error)
       toast.error('Failed to upload file: ' + (error as Error).message)
@@ -98,6 +106,7 @@ export default function Uploader({ onInspect, onPreview }: UploaderProps) {
   }
 
    const handleInspect = () => {
+    console.log("shit gets fucked")
       if (fileId) {
         onInspect(fileId)
    }
