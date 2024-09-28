@@ -1,10 +1,25 @@
+"use client"
 import Image from 'next/image'
 import Link from 'next/link'
 import ExpandingArrow from '@/components/expanding-arrow'
 import Uploader from '@/components/uploader'
 import { Toaster } from '@/components/toaster'
+import InspectModal from '@/components/form-modal'
 
+import { useState } from 'react'
 export default function Home() {
+
+  const [inspectFileId, setInspectFileId] = useState<string | null>(null)
+
+  const handleInspect = (fileId: string) => {
+    setInspectFileId(fileId)
+    console.log(fileId)
+  }
+
+  const handleCloseModal = () => {
+    setInspectFileId(null)
+  }
+
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center">
       <Toaster />
@@ -19,7 +34,7 @@ export default function Home() {
         Invoice your contracts
       </h1>
       <div className="bg-white/30 p-12 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-xl mx-auto w-full">
-        <Uploader />
+        <Uploader onInspect={handleInspect} />
       </div>
       <p className="font-light text-gray-600 w-full max-w-lg text-center mt-6">
         <Link
@@ -61,6 +76,7 @@ export default function Home() {
           <p className="font-light">Source</p>
         </Link>
       </div> */}
+       {inspectFileId && <InspectModal fileId={inspectFileId} onClose={handleCloseModal} />}
     </main>
   )
 }
