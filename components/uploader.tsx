@@ -28,7 +28,7 @@ export default function Uploader({ onInspect }: UploaderProps) {
   const [uploadSuccess, setUploadSuccess] = useState(false)
   const [fileId, setFileId] = useState<string | null>(null)
 
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [preview, setPreview] = useState<string | null>(null)
   const [isPdf, setIsPdf] = useState(false)
 
@@ -141,6 +141,7 @@ export default function Uploader({ onInspect }: UploaderProps) {
 
   const handleInspect = () => {
     if (fileId) {
+      setIsModalOpen(true);
       onInspect(fileId)
     }
   }

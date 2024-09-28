@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { Drawer } from "vaul";
 import * as Dialog from "@radix-ui/react-dialog";
 import useMediaQuery from "@/lib/hooks/use-media-query";
-import { sfPro } from "@/app/fonts";
 export function Modal({
   children,
   className,
