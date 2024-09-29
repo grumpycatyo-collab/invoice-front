@@ -1,7 +1,7 @@
 import { Contract } from '@/components/invoices/invoice-manager';
 import { formatDate } from '@/lib/utils';
 import LoadingDots from '../loading-dots';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import InvoiceDetailsForm from '../invoice-detail-form';
 import { ContractFields } from '@/types/contractFields';
 interface InvoiceDetailsProps {
@@ -12,8 +12,10 @@ interface InvoiceDetailsProps {
 
 
 export default function InvoiceDetails({ invoice, invoiceDetails, loading }: InvoiceDetailsProps) {
-    const [fileDetails, setFileDetails] = useState<ContractFields | null>(null);
-  
+    const [fileDetails, setFileDetails] = useState<ContractFields | null>(invoiceDetails);
+    useEffect(() => {
+      setFileDetails(invoiceDetails);
+  }, [invoiceDetails]);
     if (loading) {
     return <div className="justify-content align-center relative flex"><LoadingDots/></div>;
   }
@@ -25,9 +27,10 @@ export default function InvoiceDetails({ invoice, invoiceDetails, loading }: Inv
   if (!invoiceDetails){
     return <div className="text-red-500">Something went wrong. Some of the documents are too old to be parsed.</div>;
   }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
+    setFileDetails((prev) => prev ? { ...prev, [name]: value } : null);
   };
   
   const handleServiceChange = (index: number, field: 'name' | 'price', value: string) => {
@@ -55,6 +58,7 @@ export default function InvoiceDetails({ invoice, invoiceDetails, loading }: Inv
       return { ...prev, services: updatedServices };
     });
   };
+  
   return (
     <div className="w-full">
      {loading ? (
@@ -64,7 +68,7 @@ export default function InvoiceDetails({ invoice, invoiceDetails, loading }: Inv
   ) : (
     <div className="h-[calc(100%-2rem)] overflow-y-auto pr-4">
       <InvoiceDetailsForm
-        fileDetails={invoiceDetails}
+        fileDetails={fileDetails}
         handleInputChange={handleInputChange}
         handleServiceChange={handleServiceChange}
         addService={addService}

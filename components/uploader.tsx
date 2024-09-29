@@ -92,6 +92,10 @@ export default function Uploader({ onInspect, onPreview }: UploaderProps) {
       window.history.pushState({ fileId }, '', newUrl);
 
       console.log('fileId',fileId)
+      if (fileId) {
+        localStorage.setItem('file_id', fileId);
+
+      }
       setFileId(fileId)
       setUploadSuccess(true)
       toast.success('File converted successfully!')

@@ -86,10 +86,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
         console.log("Authentication successful:", data);
         // Handle successful authentication (e.g., store token, redirect)
         if (data.access_token) {
-          localStorage.setItem('access_token', data.access_token);
-
+          localStorage.setItem('access_token', data.access_token)
+  
         }
 
+
+        
         window.location.reload();
 
         toast.success('User successfully authenticated')

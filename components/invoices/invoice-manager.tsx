@@ -6,7 +6,7 @@ import LoadingDots from '../loading-dots';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { ContractFields } from '@/types/contractFields';
-
+import Tooltip from "../shared/tooltip";
 export interface Contract {
   _id: string;
   contract_fields: {
@@ -15,6 +15,7 @@ export interface Contract {
   };
   filename: string;
   user_id: string;
+  documentId: string;
 }
 
 export default function InvoiceManager() {
@@ -47,6 +48,7 @@ export default function InvoiceManager() {
           throw new Error('Failed to fetch invoices');
         }
         const data = await response.json();
+        console.log(data)
         setInvoices(data);
         setIsLoading(false);
       } catch (err) {
@@ -57,16 +59,17 @@ export default function InvoiceManager() {
 
     fetchInvoices();
   }, []);
-
+  const accessToken = localStorage.getItem('access_token');
+      
+  if (accessToken === null) {
+    localStorage.removeItem('access_token');
+    return;
+  }
   useEffect(() => {
     if (selectedInvoice) {
       setLoading(true);
-      const accessToken = localStorage.getItem('access_token');
-      if (accessToken === null) {
-        localStorage.removeItem('access_token');
-        return;
-      }
-      axios.get(`http://localhost:8005/files/inspect_invoice/${selectedInvoice._id}`, {
+     
+      axios.get(`http://localhost:8005/files/inspect_invoice/${selectedInvoice.documentId}`, {
         headers: {
           'Content-Type': 'multipart/form-data',
           "Access-Control-Allow-Origin": "*",
@@ -107,12 +110,44 @@ export default function InvoiceManager() {
     return <div>{error}</div>;
   }
 
+  const handleSave = async () => {
+   
+    if (selectedInvoice) {
+    try {
+      const response = await axios.put(
+        `http://localhost:8005/files/save_invoice/${selectedInvoice.documentId}`,
+        invoiceDetails,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers":
+              "Access-Control-Allow-Headers, Origin, X-Api-Key, X-Requested-With, Content-Type, Accept, Authorization",
+          }
+        }
+      );
+  
+      if (response.status === 200) {
+        toast.success('Invoice saved successfully');
+        console.log("Invoice saved:", response.data);
+      } else {
+        throw new Error('Failed to save invoice');
+      }
+    } catch (error) {
+      console.error('Error saving invoice:', error);
+      toast.error('Error saving invoice');
+    }
+}
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-1/3">
           <h2 className="text-xl font-sf ">Invoice List</h2>
-          <div className="h-[calc(100vh-400px)] overflow-y-auto pr-4">
+          <div className="h-[calc(100vh-100px)] overflow-y-auto pr-4">
             <InvoiceList
               invoices={invoices}
               onSelectInvoice={handleSelectInvoice}
@@ -120,7 +155,7 @@ export default function InvoiceManager() {
           </div>
         </div>
         <div className="w-1 bg-gray-200 hidden md:block"></div>
-        <div className="w-full md:w-2/3">
+        <div className="w-full h-[calc(100vh-100px)]md:w-2/3">
           {selectedInvoice ? (
             <InvoiceDetails 
               invoice={selectedInvoice} 
@@ -132,6 +167,24 @@ export default function InvoiceManager() {
           )}
         </div>
       </div>
+      <div className="px-6 py-3 flex justify-end space-x-2">
+          <Tooltip content="Saves invoice to your library">
+            <button
+              type="button"
+              onClick={handleSave}
+              className="font-sf flex h-10 items-center justify-center rounded-md border border-black bg-black text-white hover:bg-white hover:text-black text-sm transition-all focus:outline-none px-4"
+            >
+              Save
+            </button>
+          </Tooltip>
+          <button
+            type="button"
+            // onClick={handleDownload}
+            className="font-sf flex h-10 items-center justify-center rounded-md border border-gray-200 bg-white text-black hover:bg-gray-100 text-sm transition-all focus:outline-none px-4"
+          >
+            Download
+          </button>
+        </div>
     </div>
   );
 }

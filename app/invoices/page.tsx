@@ -27,6 +27,9 @@ export default function InvoiceListPage() {
       </p>
 </a>
   </div> 
+  <h1 className="pt-4 pb-8 bg-gradient-to-br from-black via-[#171717] to-[#575757] bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl">
+        Track your invoices
+      </h1>
 
   <div className="bg-white/30 h-full shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg  w-full">
     <InvoiceManager />
