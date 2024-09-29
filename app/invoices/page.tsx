@@ -6,7 +6,7 @@ import ExpandingArrow from '@/components/expanding-arrow'
 export default function InvoiceListPage() {
   return (
     // <main className=" min-h-screen flex-col items-center justify-center">
-    <div className="relative flex-col flex max-w-5xl w-full ">
+    <div className="relative flex-col flex max-w-7xl w-full ">
      <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 pb-4 sm:space-x-4">
 <Link
         href="/invoices"

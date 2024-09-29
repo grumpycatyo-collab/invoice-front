@@ -76,3 +76,39 @@ export function formatDate(input: string | number | Date): string {
     year: 'numeric',
   })
 }
+
+
+// utils/typeValidation.ts
+
+import { Service, ContractFields } from '@/types/contractFields';
+
+export function validateAndConvertField(key: keyof ContractFields, value: any): any {
+  switch (key) {
+    case 'issueDate':
+    case 'dueDate':
+    case 'paidDate':
+      return value ? new Date(value).toISOString().split('T')[0] : null;
+    case 'tax':
+    case 'discount':
+    case 'total':
+    case 'subtotal':
+    case 'balance_due':
+    case 'paidAmount':
+      return value !== '' ? parseFloat(value) : null;
+    case 'isRecurring':
+      return value === 'true' || value === true;
+    default:
+      return value;
+  }
+}
+
+export function validateAndConvertService(service: Partial<Service>): Partial<Service> {
+  return {
+    descriptionOfGoodsAndServices: service.descriptionOfGoodsAndServices,
+    quantity: service.quantity !== undefined ? parseInt(service.quantity.toString(), 10) : undefined,
+    pricePerUnit: service.pricePerUnit !== undefined ? parseFloat(service.pricePerUnit.toString()) : undefined,
+    VAT: service.VAT !== undefined ? parseFloat(service.VAT.toString()) : undefined,
+    amount: service.amount !== undefined ? parseFloat(service.amount.toString()) : undefined,
+    amountCurrencySymbol: service.amountCurrencySymbol,
+  };
+}

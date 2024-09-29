@@ -10,7 +10,7 @@ import { Document, Page } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import toast from 'react-hot-toast'
-import { ContractFields } from '@/types/contractFields';
+import { ContractFields, Service } from '@/types/contractFields';
 import InvoiceDetailsForm from './invoice-detail-form'
 export function Modal({
   children,
@@ -178,7 +178,7 @@ export default function InspectModal({ fileId, filePreview, onClose }: InspectMo
   
   const handleDownload = async () => {
     try {
-      const url = `http://localhost:8005/files/download/${file_id}`;
+      const url = `http://localhost:8005/files/download/${invoiceId}`;
   
       const response = await fetch(url, {
         method: 'GET',
@@ -223,14 +223,27 @@ export default function InspectModal({ fileId, filePreview, onClose }: InspectMo
       console.error("Error downloading document:", error);
     }
   };
-
-
-  const handleServiceChange = (index: number, field: 'name' | 'price', value: string) => {
-    setFileDetails((prev) => {
-      if (!prev) return null;
-      const updatedServices = prev.services ? [...prev.services] : [];
-      updatedServices[index] = { ...updatedServices[index], [field]: field === 'price' ? parseFloat(value) : value };
-      return { ...prev, services: updatedServices };
+  const handleServiceChange = (index: number, field: keyof Service, value: string | number) => {
+    setFileDetails((prevDetails) => {
+      if (!prevDetails) return null;
+  
+      const updatedServices = prevDetails.services ? [...prevDetails.services] : [];
+      
+      if (!updatedServices[index]) {
+        updatedServices[index] = {} as Service;
+      }
+  
+      updatedServices[index] = {
+        ...updatedServices[index],
+        [field]: field === 'descriptionOfGoodsAndServices' || field === 'amountCurrencySymbol'
+          ? value as string
+          : Number(value)
+      };
+  
+      return {
+        ...prevDetails,
+        services: updatedServices
+      };
     });
   };
 
@@ -238,7 +251,13 @@ export default function InspectModal({ fileId, filePreview, onClose }: InspectMo
     setFileDetails((prev) => {
       if (!prev) return null;
       const currentServices = prev.services ?? [];
-      return { ...prev, services: [...currentServices, { name: '', price: 0 }] };
+      return { ...prev, services: [...currentServices, { descriptionOfGoodsAndServices: '',
+        quantity: 0,
+        pricePerUnit: 0,
+        VAT: 0,
+        amount: 0,
+        amountCurrencySymbol: '' 
+      }] };
     });
   };
   

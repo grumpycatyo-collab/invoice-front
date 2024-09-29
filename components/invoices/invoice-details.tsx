@@ -3,7 +3,7 @@ import { formatDate } from '@/lib/utils';
 import LoadingDots from '../loading-dots';
 import { useState,useEffect } from 'react';
 import InvoiceDetailsForm from '../invoice-detail-form';
-import { ContractFields } from '@/types/contractFields';
+import { ContractFields, Service } from '@/types/contractFields';
 interface InvoiceDetailsProps {
   invoice: Contract | null;
   invoiceDetails: ContractFields | null;
@@ -33,11 +33,16 @@ export default function InvoiceDetails({ invoice, invoiceDetails, loading }: Inv
     setFileDetails((prev) => prev ? { ...prev, [name]: value } : null);
   };
   
-  const handleServiceChange = (index: number, field: 'name' | 'price', value: string) => {
+  const handleServiceChange = (index: number, field: keyof Service, value: string | number) => {
     setFileDetails((prev) => {
       if (!prev) return null;
       const updatedServices = prev.services ? [...prev.services] : [];
-      updatedServices[index] = { ...updatedServices[index], [field]: field === 'price' ? parseFloat(value) : value };
+      updatedServices[index] = { 
+        ...updatedServices[index], 
+        [field]: field === 'descriptionOfGoodsAndServices' || field === 'amountCurrencySymbol'
+          ? value as string
+          : Number(value)
+      };
       return { ...prev, services: updatedServices };
     });
   };
@@ -46,7 +51,13 @@ export default function InvoiceDetails({ invoice, invoiceDetails, loading }: Inv
     setFileDetails((prev) => {
       if (!prev) return null;
       const currentServices = prev.services ?? [];
-      return { ...prev, services: [...currentServices, { name: '', price: 0 }] };
+      return { ...prev, services: [...currentServices, { descriptionOfGoodsAndServices: '',
+        quantity: 0,
+        pricePerUnit: 0,
+        VAT: 0,
+        amount: 0,
+        amountCurrencySymbol: '' 
+      }] };
     });
   };
   

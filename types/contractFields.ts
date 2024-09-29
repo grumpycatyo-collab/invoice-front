@@ -1,6 +1,10 @@
 export interface Service {
-    name: string;
-    price: number;
+  descriptionOfGoodsAndServices?: string;
+  quantity: number;
+  pricePerUnit: number;
+  VAT: number;
+  amount: number;
+  amountCurrencySymbol: string;
   }
   
   // Define the ContractFields type based on the provided schema

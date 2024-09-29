@@ -1,11 +1,15 @@
 // InvoiceDetailsForm.tsx
 import React from 'react';
-import { ContractFields } from '@/types/contractFields';
+import { ContractFields, Service } from '@/types/contractFields';
 
 interface InvoiceDetailsFormProps {
   fileDetails: ContractFields | null;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  handleServiceChange: (index: number, field: 'name' | 'price', value: string) => void;
+  handleServiceChange: (
+    index: number, 
+    field: keyof Service, 
+    value: string | number
+  ) => void;
   addService: () => void;
   removeService: (index: number) => void;
 }
@@ -54,7 +58,7 @@ export default function InvoiceDetailsForm({
                   {fieldMapping[key]}
                 </label>
                 <input
-                    type={key === 'totalRecurringDuration' || key === 'paymentFrequency' ? 'text' : 'text'}
+                  type={key === 'issueDate' || key === 'dueDate' || key === 'paidDate' ? 'date' : 'text'}
                   name={key}
                   id={key}
                   value={value?.toString() || ''}
@@ -75,17 +79,45 @@ export default function InvoiceDetailsForm({
             <div key={index} className="flex items-center space-x-2">
               <input
                 type="text"
-                value={service.name}
-                onChange={(e) => handleServiceChange(index, 'name', e.target.value)}
+                value={service.descriptionOfGoodsAndServices}
+                onChange={(e) => handleServiceChange(index, 'descriptionOfGoodsAndServices', e.target.value)}
                 className="flex-grow p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                placeholder="Service name"
+                placeholder="Description of goods and services"
               />
               <input
                 type="number"
-                value={service.price}
-                onChange={(e) => handleServiceChange(index, 'price', e.target.value)}
+                value={service.quantity}
+                onChange={(e) => handleServiceChange(index, 'quantity', e.target.value)}
+                className="w-24 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                placeholder="Quantity"
+              />
+              <input
+                type="number"
+                value={service.pricePerUnit}
+                onChange={(e) => handleServiceChange(index, 'pricePerUnit', e.target.value)}
                 className="w-32 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                placeholder="Price"
+                placeholder="Price per unit"
+              />
+              <input
+                type="number"
+                value={service.VAT}
+                onChange={(e) => handleServiceChange(index, 'VAT', e.target.value)}
+                className="w-24 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                placeholder="VAT"
+              />
+              <input
+                type="number"
+                value={service.amount}
+                onChange={(e) => handleServiceChange(index, 'amount', e.target.value)}
+                className="w-32 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                placeholder="Amount"
+              />
+              <input
+                type="text"
+                value={service.amountCurrencySymbol}
+                onChange={(e) => handleServiceChange(index, 'amountCurrencySymbol', e.target.value)}
+                className="w-16 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                placeholder="Currency"
               />
               <button
                 type="button"
@@ -98,16 +130,14 @@ export default function InvoiceDetailsForm({
               </button>
             </div>
           ))}
-          <button
-            type="button"
-            onClick={addService}
-            className="p-2 transition-colors duration-200"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-            </svg>
-          </button>
         </div>
+        <button
+          type="button"
+          onClick={addService}
+          className="mt-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Add Service
+        </button>
       </div>
 
       {/* Bank Details */}
