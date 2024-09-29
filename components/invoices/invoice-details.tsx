@@ -60,6 +60,13 @@ export default function InvoiceDetails({ invoice, invoiceDetails, loading }: Inv
       }] };
     });
   };
+
+  const handleCheckboxChange = (name: string, checked: boolean) => {
+    setFileDetails(prevDetails => ({
+      ...prevDetails,
+      [name]: checked
+    }));
+  };
   
   const removeService = (index: number) => {
     setFileDetails((prev) => {
@@ -81,6 +88,7 @@ export default function InvoiceDetails({ invoice, invoiceDetails, loading }: Inv
       <InvoiceDetailsForm
         fileDetails={fileDetails}
         handleInputChange={handleInputChange}
+        handleCheckboxChange={handleCheckboxChange}   
         handleServiceChange={handleServiceChange}
         addService={addService}
         removeService={removeService}

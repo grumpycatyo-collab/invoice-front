@@ -41,4 +41,5 @@ export interface ContractFields {
     isRecurring?: boolean;
     totalRecurringDuration?: string;
     paymentFrequency?: string;
+    is_expenses?: boolean;
   }

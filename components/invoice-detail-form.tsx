@@ -5,6 +5,7 @@ import { ContractFields, Service } from '@/types/contractFields';
 interface InvoiceDetailsFormProps {
   fileDetails: ContractFields | null;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleCheckboxChange: (name: string, checked: boolean) => void;
   handleServiceChange: (
     index: number, 
     field: keyof Service, 
@@ -42,6 +43,7 @@ const fieldMapping: { [key: string]: string } = {
 export default function InvoiceDetailsForm({
   fileDetails,
   handleInputChange,
+  handleCheckboxChange,
   handleServiceChange,
   addService,
   removeService
@@ -139,6 +141,20 @@ export default function InvoiceDetailsForm({
           Add Service
         </button>
       </div>
+      <div className="col-span-2 flex items-center">
+          <input
+            type="checkbox"
+            id="is_expenses"
+            name="is_expenses"
+            checked={fileDetails?.is_expenses || false}
+            onChange={(e) => handleCheckboxChange('is_expenses', e.target.checked)}
+            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+          />
+          <label htmlFor="is_expenses" className="ml-2 block text-sm text-gray-900">
+            Is Expenses
+          </label>
+        </div>
+
 
       {/* Bank Details */}
       <div className="mt-6">

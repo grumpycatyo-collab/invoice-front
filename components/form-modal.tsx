@@ -134,6 +134,12 @@ export default function InspectModal({ fileId, filePreview, onClose }: InspectMo
     setShowModal(false);
     onClose();
   };
+  const handleCheckboxChange = (name: string, checked: boolean) => {
+    setFileDetails(prevDetails => ({
+      ...prevDetails,
+      [name]: checked
+    }));
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -310,6 +316,7 @@ export default function InspectModal({ fileId, filePreview, onClose }: InspectMo
                   <InvoiceDetailsForm
                     fileDetails={fileDetails}
                     handleInputChange={handleInputChange}
+                    handleCheckboxChange={handleCheckboxChange}   
                     handleServiceChange={handleServiceChange}
                     addService={addService}
                     removeService={removeService}

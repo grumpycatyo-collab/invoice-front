@@ -50,7 +50,7 @@ export default function Home() {
       </Link>
 
       <a
-      href="https://twitter.com/steventey/status/1613928948915920896"
+      href="/dashboard"
       target="_blank"
       rel="noreferrer"
       className="mx-auto mb-5 flex max-w-fit animate-fade-up items-center justify-center space-x-2 overflow-hidden rounded-full bg-purple-100 px-7 py-2 transition-colors hover:bg-purple-200"
