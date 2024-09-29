@@ -103,12 +103,26 @@ export default function InspectModal({ fileId, filePreview, onClose }: InspectMo
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const fileId = urlParams.get('fileId');
-    if (fileId) {
+    const accessToken = localStorage.getItem('access_token');
+    if (accessToken === null){
+        localStorage.removeItem('access_token');
+    }
+    const file_id = String(urlParams.get('fileId'));
+    if (file_id) {
       setLoading(true);
-      axios.get(`http://localhost:8005/files/inspect/${fileId}`)
+      axios.get(`http://localhost:8005/files/inspect_invoice/${file_id}`,{
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers":
+            "Access-Control-Allow-Headers, Origin, X-Api-Key, X-Requested-With, Content-Type, Accept, Authorization",
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
         .then(response => {
           setFileDetails(response.data);
+          console.log(response.data)
           setLoading(false);
         })
         .catch(error => {

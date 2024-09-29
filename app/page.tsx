@@ -19,8 +19,6 @@ export default function Home() {
     const accessToken = localStorage.getItem('access_token')
     setIsLoggedIn(!!accessToken)
   }, [])
-
-  
   const handleInspect = (fileId: string) => {
     setInspectFileId(fileId)
     setIsModalOpen(true)
@@ -44,7 +42,7 @@ export default function Home() {
       {isLoggedIn && (
       <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
       <Link
-        href="https://vercel.com/templates/next.js/blob-starter"
+        href="/invoices"
         className="group rounded-full  flex space-x-1 bg-white/30 shadow-sm ring-1 ring-gray-900/5 text-gray-600 text-sm font-medium px-10 py-2 hover:shadow-lg active:shadow-sm transition-all"
       >
         <p>See other invoices</p>

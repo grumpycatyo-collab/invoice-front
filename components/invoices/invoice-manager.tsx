@@ -26,8 +26,8 @@ export default function InvoiceManager() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-1/3">
-          <h2 className="text-xl font-semibold mb-4">Invoice List</h2>
-          <div className="h-[calc(100vh-200px)] overflow-y-auto pr-4">
+          <h2 className="text-xl font-semibold">Invoice List</h2>
+          <div className="h-[calc(100vh-400px)] overflow-y-auto pr-4">
             <InvoiceList
               invoices={mockInvoices}
             //   onSelectInvoice={setSelectedInvoice}
@@ -36,7 +36,6 @@ export default function InvoiceManager() {
         </div>
         <div className="w-1 bg-gray-200 hidden md:block"></div>
         <div className="w-full md:w-2/3">
-          <h2 className="text-xl font-semibold mb-4">Invoice Details</h2>
           {selectedInvoice ? (
             <InvoiceDetails invoice={selectedInvoice} />
           ) : (

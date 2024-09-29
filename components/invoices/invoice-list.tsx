@@ -16,7 +16,7 @@ export function InvoiceList({ invoices }: Props) {
   }
 
   return (
-    <ul className="space-y-0.5 py-2 xl:py-4">
+    <ul className="space-y-1 py-2 xl:py-4">
       {invoices.map((invoice) => (
         <li key={invoice.id}>
           <InvoiceCard invoice={invoice} />

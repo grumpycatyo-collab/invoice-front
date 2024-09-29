@@ -106,7 +106,6 @@ export default function Uploader({ onInspect, onPreview }: UploaderProps) {
   }
 
    const handleInspect = () => {
-    console.log("shit gets fucked")
       if (fileId) {
         onInspect(fileId)
    }
